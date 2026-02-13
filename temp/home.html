@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kozendo Home Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Material+Icons&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec13",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102210",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(246, 248, 246, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .bg-overlay {
+            background: linear-gradient(to bottom, rgba(16, 34, 16, 0.2) 0%, rgba(16, 34, 16, 0) 40%, rgba(16, 34, 16, 0.3) 100%);
+        }
+        .ios-notch {
+            height: 44px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 overflow-hidden">
+<!-- Main Application Container (Phone Form Factor) -->
+<main class="relative h-screen w-full max-w-[430px] mx-auto overflow-hidden shadow-2xl">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<img alt="Misty forest with soft sunlight" class="w-full h-full object-cover" data-alt="Serene misty forest with tall trees and soft morning sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQHZeK8_kEnfNkHTY1ExI2t16XN1IC13J91ksBevCFUd2Z4tf4ek1uzHeckSvMgMXpR4EN8vfNgMJVLHeKYPMd37ys82p2HMkO4hlEzkyJYhBsgsd-LXGj8ipRwMKDl3QkRMbBDJpC9mhGCpDeXD5XOYO3Yxz-9uc8YgOwfEtH8iuId2blpOg5SV9sAB4nTgqB1EV-Cj6E5himPS_Y6-15-tMyVUE_48lLnDdBjQjncygLXYTHZbFC4hGX1axRDlWrATK0diE0CtMV"/>
+<div class="absolute inset-0 bg-overlay"></div>
+</div>
+<!-- Header -->
+<header class="relative z-10 ios-notch flex items-end px-6 pb-2 justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-icons text-white text-lg">spa</span>
+</div>
+<span class="text-white font-bold tracking-tight text-xl">KOZENDO</span>
+</div>
+<button class="p-2 text-white bg-white/10 rounded-full backdrop-blur-md">
+<span class="material-icons">menu</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<div class="relative z-10 px-6 pt-12 flex flex-col h-[calc(100%-180px)]">
+<!-- Greeting Section -->
+<section class="mb-12">
+<p class="text-primary font-semibold tracking-wide uppercase text-xs mb-1">Morning Ritual</p>
+<h1 class="text-4xl text-white font-light">Good morning,<br/><span class="font-bold">Alex.</span></h1>
+</section>
+<!-- Daily Quote Card -->
+<section class="mt-4 glass-panel p-8 rounded-xl relative overflow-hidden">
+<!-- Decorative element -->
+<div class="absolute top-0 right-0 p-4 opacity-20">
+<span class="material-icons text-6xl text-primary">format_quote</span>
+</div>
+<div class="relative z-10">
+<p class="font-serif text-2xl leading-relaxed italic text-slate-900 mb-6">
+                        "Nature does not hurry, yet everything is accomplished."
+                    </p>
+<div class="flex items-center gap-3">
+<div class="h-[1px] w-8 bg-primary/40"></div>
+<p class="text-sm font-semibold tracking-wider text-slate-700 uppercase">Lao Tzu</p>
+</div>
+</div>
+</section>
+<!-- Swipe Up Hint -->
+<div class="mt-auto flex flex-col items-center gap-2 pb-8 opacity-60">
+<p class="text-[10px] font-bold tracking-[0.2em] text-white uppercase">Swipe up for insights</p>
+<span class="material-icons text-white text-sm">keyboard_double_arrow_up</span>
+</div>
+</div>
+<!-- Floating Audio Control Widget -->
+<div class="absolute bottom-8 left-6 right-6 z-20">
+<div class="glass-panel rounded-full px-5 py-3 flex items-center gap-4 border border-white/30">
+<!-- Play Button -->
+<button class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-icons">pause</span>
+</button>
+<!-- Audio Info -->
+<div class="flex-1 min-w-0">
+<p class="text-xs font-bold text-slate-900 truncate">Forest Birds</p>
+<p class="text-[10px] text-slate-600 font-medium">Ambient Sound</p>
+</div>
+<!-- Volume/Progress Slider Mockup -->
+<div class="flex items-center gap-3 w-24">
+<span class="material-icons text-slate-600 text-sm">volume_down</span>
+<div class="flex-1 h-1 bg-primary/20 rounded-full relative overflow-hidden">
+<div class="absolute left-0 top-0 h-full w-2/3 bg-primary rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- iOS Home Indicator Spacing -->
+<div class="h-4"></div>
+</div>
+<!-- Status Bar Mimic (Top Right) -->
+<div class="absolute top-0 right-0 p-4 z-50 flex items-center gap-1.5 opacity-80 scale-75 origin-top-right">
+<span class="material-icons text-white text-sm">signal_cellular_alt</span>
+<span class="material-icons text-white text-sm">wifi</span>
+<span class="material-icons text-white text-sm">battery_full</span>
+</div>
+</main>
+</body></html>

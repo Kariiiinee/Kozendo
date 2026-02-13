@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Daily Wellness Scan | Kozendo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec13",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102210",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 min-h-screen">
+<!-- iOS Status Bar Placeholder -->
+<div class="h-11 w-full bg-background-light dark:bg-background-dark sticky top-0 z-50"></div>
+<!-- Header Navigation -->
+<header class="sticky top-11 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
+<button class="text-slate-500 dark:text-slate-400">
+<span class="material-icons">close</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Daily Scan</h1>
+<div class="w-6"></div> <!-- Spacer for balance -->
+</header>
+<!-- Progress Indicator -->
+<div class="fixed top-[100px] left-0 w-full px-6 z-40">
+<div class="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3 transition-all duration-500"></div>
+</div>
+</div>
+<!-- Main Content -->
+<main class="max-w-md mx-auto px-6 pt-12 pb-32">
+<div class="space-y-12">
+<!-- Intro Text -->
+<section class="text-center space-y-2">
+<h2 class="text-2xl font-extrabold">Mindful Check-in</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Take a moment to listen to yourself.</p>
+</section>
+<form class="space-y-8">
+<!-- Body Scan Section -->
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons text-xl">accessibility_new</span>
+</div>
+<div>
+<h3 class="font-bold">Body Scan</h3>
+<p class="text-xs text-slate-500">Physical sensations</p>
+</div>
+</div>
+<input class="w-full bg-white dark:bg-slate-900 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400" placeholder="e.g., energized, tense, light" type="text"/>
+</div>
+<!-- Heart Scan Section -->
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons text-xl">favorite</span>
+</div>
+<div>
+<h3 class="font-bold">Heart Scan</h3>
+<p class="text-xs text-slate-500">Emotional landscape</p>
+</div>
+</div>
+<input class="w-full bg-white dark:bg-slate-900 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400" placeholder="e.g., grateful, anxious, calm" type="text"/>
+</div>
+<!-- Environment Scan Section -->
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons text-xl">wb_sunny</span>
+</div>
+<div>
+<h3 class="font-bold">Environment Scan</h3>
+<p class="text-xs text-slate-500">Your surroundings</p>
+</div>
+</div>
+<input class="w-full bg-white dark:bg-slate-900 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400" placeholder="e.g., peaceful, cluttered, noisy" type="text"/>
+</div>
+<!-- Breath Action Section -->
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons text-xl">air</span>
+</div>
+<div>
+<h3 class="font-bold">Deep Breath Action</h3>
+<p class="text-xs text-slate-500">Select a technique</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-3 px-4 rounded-xl border-2 border-primary bg-primary/5 text-sm font-semibold" type="button">Box Breathing</button>
+<button class="py-3 px-4 rounded-xl border-2 border-transparent bg-white dark:bg-slate-900 text-sm font-semibold text-slate-500" type="button">4-7-8 Method</button>
+</div>
+</div>
+<!-- Daily Reflection Section -->
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-icons text-xl">edit_note</span>
+</div>
+<div>
+<h3 class="font-bold">Daily Reflection</h3>
+<p class="text-xs text-slate-500">One sentence for today</p>
+</div>
+</div>
+<textarea class="w-full bg-white dark:bg-slate-900 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 resize-none" placeholder="Today I learned that..." rows="3"></textarea>
+</div>
+<!-- Mood Selector -->
+<div class="space-y-4 pb-8">
+<h3 class="font-bold text-center">Overall Vibe</h3>
+<div class="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm">
+<button class="text-3xl grayscale hover:grayscale-0 transition-all hover:scale-125" type="button">😔</button>
+<button class="text-3xl grayscale hover:grayscale-0 transition-all hover:scale-125" type="button">😐</button>
+<button class="text-3xl scale-125 transition-all" type="button">✨</button>
+<button class="text-3xl grayscale hover:grayscale-0 transition-all hover:scale-125" type="button">😊</button>
+<button class="text-3xl grayscale hover:grayscale-0 transition-all hover:scale-125" type="button">🤩</button>
+</div>
+</div>
+</form>
+</div>
+</main>
+<!-- Bottom Action Bar (iOS Style Floating) -->
+<div class="fixed bottom-0 left-0 w-full p-6 pb-10 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/90 dark:via-background-dark/90 to-transparent">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+<span>Submit Scan</span>
+<span class="material-icons">send</span>
+</button>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="fixed top-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10"></div>
+<div class="fixed bottom-40 -left-20 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+</body></html>
