@@ -11,6 +11,7 @@ export interface AIInsight {
     mainInsight: string;
     microActions: { id: number; text: string; instruction: string; icon: string }[];
     upliftingQuote: string;
+    debugError?: string; // For troubleshooting connection issues
     recommendedActivity?: {
         title: string;
         duration: string;
@@ -40,8 +41,13 @@ export const generateAIInsights = async (data: ScanData): Promise<AIInsight> => 
 
         // If response is not ok (e.g., 404, 500), throw to trigger fallback
         throw new Error(`API error ${response.status}: ${errorData.details || response.statusText}`);
-    } catch (error) {
+    } catch (error: any) {
         console.error('AI Service Connection Issue:', error);
+
+        const isLocalhost = window.location.hostname === 'localhost';
+        const debugMsg = isLocalhost
+            ? "Running on localhost: Vite dev server does not support /api serverless functions. Use 'vercel dev'."
+            : (error.message || "Unknown connection error");
 
         // LOCAL SIMULATION FALLBACK (Existing Logic)
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -100,8 +106,9 @@ export const generateAIInsights = async (data: ScanData): Promise<AIInsight> => 
 
         return {
             mainInsight,
-            microActions: microActions.slice(0, 3), // Keep it to top 3
-            upliftingQuote
+            microActions: microActions.slice(0, 3),
+            upliftingQuote,
+            debugError: debugMsg
         };
     }
 };

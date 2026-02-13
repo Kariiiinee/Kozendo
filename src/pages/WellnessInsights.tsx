@@ -110,11 +110,17 @@ const WellnessInsights: React.FC = () => {
                 {/* Main Content Scroll Area */}
                 <div className="flex-1 overflow-y-auto px-6 pt-4 pb-32 relative z-10 no-scrollbar">
                     {/* Analysis Badge */}
-                    <div className="flex justify-center mb-6">
+                    <div className="flex flex-col items-center mb-6 gap-2">
                         <div className="inline-flex items-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 px-4 py-1.5 rounded-full">
                             <Sparkles className="text-[#13ec13] w-4 h-4" />
                             <span className="text-[10px] font-bold uppercase tracking-widest text-[#13ec13]">Analysis Complete</span>
                         </div>
+
+                        {insight.debugError && (
+                            <div className="bg-amber-50 border border-amber-200 text-amber-700 text-[10px] px-3 py-1 rounded-lg max-w-xs text-center font-medium animate-pulse">
+                                DEBUG: {insight.debugError}
+                            </div>
+                        )}
                     </div>
 
                     {/* The Insight Glass Card */}
