@@ -1,11 +1,71 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sparkles, Brain, Accessibility, Droplets, Wind, Bookmark, ChevronLeft } from 'lucide-react';
-import { mockData } from '../data/mockData';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Sparkles, Brain, Accessibility, Droplets, Wind, Bookmark, ChevronLeft, Loader2 } from 'lucide-react';
 import Header from '../components/Header';
+import { generateAIInsights, AIInsight } from '../services/aiService';
 
 const WellnessInsights: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const scanData = location.state?.scanData;
+
+    const [loading, setLoading] = React.useState(true);
+    const [insight, setInsight] = React.useState<AIInsight | null>(null);
+
+    React.useEffect(() => {
+        const fetchInsights = async () => {
+            if (scanData) {
+                const results = await generateAIInsights(scanData);
+                setInsight(results);
+                setLoading(false);
+            } else {
+                // Fallback if no data (e.g., direct navigation)
+                setLoading(false);
+            }
+        };
+        fetchInsights();
+    }, [scanData]);
+
+    if (loading) {
+        return (
+            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center items-center">
+                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-6">
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-[#13ec13]/20 rounded-full blur-3xl animate-pulse" />
+                        <div className="relative bg-white p-6 rounded-3xl shadow-2xl">
+                            <Brain className="w-16 h-16 text-[#13ec13] animate-bounce" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900">Personalizing Your Flow</h2>
+                        <div className="flex items-center justify-center gap-2 text-[#13ec13] font-bold uppercase tracking-widest text-xs">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>AI is thinking...</span>
+                        </div>
+                    </div>
+                    <p className="text-slate-400 text-sm leading-relaxed px-4">
+                        Analyzing your scan results to create a unique micro-routine just for you.
+                    </p>
+                </main>
+            </div>
+        );
+    }
+
+    if (!insight) {
+        return (
+            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center items-center">
+                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-6">
+                    <p className="text-slate-500">No scan data found. Please complete a scan first.</p>
+                    <button
+                        onClick={() => navigate('/scan')}
+                        className="bg-[#13ec13] text-slate-900 font-bold px-6 py-3 rounded-xl"
+                    >
+                        Start Scan
+                    </button>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center">
@@ -37,7 +97,7 @@ const WellnessInsights: React.FC = () => {
                     </div>
 
                     {/* The Insight Glass Card */}
-                    <div className="bg-white/70 backdrop-blur-2xl rounded-[1.5rem] p-6 relative overflow-hidden mb-8 border border-white/40 shadow-xl shadow-[#13ec13]/5">
+                    <div className="bg-white/70 backdrop-blur-2xl rounded-[1.5rem] p-6 relative overflow-hidden mb-8 border border-white/40 shadow-xl shadow-[#13ec13]/5 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[#13ec13]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
 
                         <div className="flex items-center gap-3 mb-6">
@@ -51,16 +111,16 @@ const WellnessInsights: React.FC = () => {
                         </div>
 
                         {/* Acknowledgment */}
-                        <div className="mb-8">
+                        <div className="mb-8 min-h-[100px]">
                             <p className="text-lg leading-relaxed font-medium text-slate-700 italic">
-                                "{mockData.insights.mainInsight}"
+                                "{insight.mainInsight}"
                             </p>
                         </div>
 
                         {/* Micro Actions */}
                         <div className="space-y-3 mb-8">
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#13ec13] mb-2">Micro-Actions</h3>
-                            {mockData.insights.microActions.map(action => (
+                            {insight.microActions.map(action => (
                                 <div key={action.id} className="flex items-center gap-4 bg-white/50 p-3.5 rounded-xl border border-white shadow-sm transition-all hover:bg-white active:scale-98">
                                     <div className="w-10 h-10 bg-[#13ec13]/10 rounded-lg flex items-center justify-center text-[#13ec13]">
                                         {action.icon === 'accessibility_new' && <Accessibility className="w-5 h-5" />}
@@ -75,25 +135,25 @@ const WellnessInsights: React.FC = () => {
                         {/* Uplifting Quote */}
                         <div className="border-t border-[#13ec13]/10 pt-6">
                             <p className="italic text-center text-slate-500 font-medium text-sm">
-                                "{mockData.insights.upliftingQuote}"
+                                "{insight.upliftingQuote}"
                             </p>
                         </div>
                     </div>
 
                     {/* Recommended Activity Card */}
-                    <div className="rounded-[1.5rem] overflow-hidden relative h-48 mb-6 group cursor-pointer shadow-lg shadow-black/10">
+                    <div className="rounded-[1.5rem] overflow-hidden relative h-48 mb-6 group cursor-pointer shadow-lg shadow-black/10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                         <img
-                            src={mockData.insights.recommendedActivity.image}
+                            src={insight.recommendedActivity.image}
                             alt="Wellness"
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-5">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <span className="text-white font-bold text-lg">{mockData.insights.recommendedActivity.title}</span>
+                                    <span className="text-white font-bold text-lg">{insight.recommendedActivity.title}</span>
                                     <div className="flex items-center gap-2 opacity-80">
                                         <span className="w-1.5 h-1.5 rounded-full bg-[#13ec13]" />
-                                        <span className="text-white/90 text-xs font-semibold">{mockData.insights.recommendedActivity.duration}</span>
+                                        <span className="text-white/90 text-xs font-semibold">{insight.recommendedActivity.duration}</span>
                                     </div>
                                 </div>
                                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">

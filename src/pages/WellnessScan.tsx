@@ -8,6 +8,26 @@ const WellnessScan: React.FC = () => {
     const [hoveredVibe, setHoveredVibe] = React.useState<string | null>(null);
     const [selectedVibe, setSelectedVibe] = React.useState<string | null>(null);
 
+    // Form States
+    const [bodyScan, setBodyScan] = React.useState('');
+    const [heartScan, setHeartScan] = React.useState('');
+    const [envScan, setEnvScan] = React.useState('');
+    const [breathAction, setBreathAction] = React.useState('');
+    const [reflection, setReflection] = React.useState('');
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const scanData = {
+            body: bodyScan,
+            heart: heartScan,
+            environment: envScan,
+            breathAction: breathAction,
+            reflection: reflection,
+            vibe: selectedVibe
+        };
+        navigate('/insights', { state: { scanData } });
+    };
+
     return (
         <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex flex-col items-center">
             <div className="w-full max-w-[430px] bg-white min-h-screen relative flex flex-col shadow-xl">
@@ -39,7 +59,7 @@ const WellnessScan: React.FC = () => {
                             <p className="text-slate-500 text-sm">Take a moment to listen to yourself.</p>
                         </section>
 
-                        <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); navigate('/insights'); }}>
+                        <form className="space-y-8" onSubmit={handleSubmit}>
                             {/* Body Scan Section */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
@@ -53,8 +73,10 @@ const WellnessScan: React.FC = () => {
                                 </div>
                                 <input
                                     className="w-full bg-slate-50 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-[#13ec13]/50 outline-none transition-all placeholder:text-slate-400"
-                                    placeholder="e.g., energized, tense, light"
+                                    placeholder="e.g., head, shoulder, back, legs, feet"
                                     type="text"
+                                    value={bodyScan}
+                                    onChange={(e) => setBodyScan(e.target.value)}
                                 />
                             </div>
 
@@ -71,8 +93,10 @@ const WellnessScan: React.FC = () => {
                                 </div>
                                 <input
                                     className="w-full bg-slate-50 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-[#13ec13]/50 outline-none transition-all placeholder:text-slate-400"
-                                    placeholder="e.g., grateful, anxious, calm"
+                                    placeholder="e.g., calm, happy, sad, anxious, stressed"
                                     type="text"
+                                    value={heartScan}
+                                    onChange={(e) => setHeartScan(e.target.value)}
                                 />
                             </div>
 
@@ -89,8 +113,10 @@ const WellnessScan: React.FC = () => {
                                 </div>
                                 <input
                                     className="w-full bg-slate-50 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-[#13ec13]/50 outline-none transition-all placeholder:text-slate-400"
-                                    placeholder="e.g., peaceful, cluttered, noisy"
+                                    placeholder="e.g., peaceful, cluttered, noisy, work, home"
                                     type="text"
+                                    value={envScan}
+                                    onChange={(e) => setEnvScan(e.target.value)}
                                 />
                             </div>
 
@@ -107,7 +133,9 @@ const WellnessScan: React.FC = () => {
                                 </div>
                                 <textarea
                                     className="w-full bg-slate-50 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-[#13ec13]/50 outline-none transition-all placeholder:text-slate-400 resize-none h-24"
-                                    placeholder="After my breath, I decided to..."
+                                    placeholder="After taking a deep breath, I thought of when I..."
+                                    value={breathAction}
+                                    onChange={(e) => setBreathAction(e.target.value)}
                                 ></textarea>
                             </div>
 
@@ -124,7 +152,9 @@ const WellnessScan: React.FC = () => {
                                 </div>
                                 <textarea
                                     className="w-full bg-slate-50 border-none rounded-xl p-4 shadow-sm focus:ring-2 focus:ring-[#13ec13]/50 outline-none transition-all placeholder:text-slate-400 resize-none h-24"
-                                    placeholder="Today I learned that..."
+                                    placeholder="Today I ..."
+                                    value={reflection}
+                                    onChange={(e) => setReflection(e.target.value)}
                                 ></textarea>
                             </div>
 
@@ -196,7 +226,7 @@ const WellnessScan: React.FC = () => {
                 {/* Bottom Action Bar */}
                 <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-6 pb-12 bg-gradient-to-t from-white via-white to-transparent z-40">
                     <button
-                        onClick={() => navigate('/insights')}
+                        onClick={handleSubmit}
                         className="w-full bg-[#13ec13] hover:bg-[#13ec13]/90 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-[#13ec13]/30 transition-all active:scale-95 flex items-center justify-center gap-2"
                     >
                         <span>Submit Scan</span>
