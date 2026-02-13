@@ -5,6 +5,8 @@ import Header from '../components/Header';
 
 const WellnessScan: React.FC = () => {
     const navigate = useNavigate();
+    const [hoveredVibe, setHoveredVibe] = React.useState<string | null>(null);
+    const [selectedVibe, setSelectedVibe] = React.useState<string | null>(null);
 
     return (
         <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex flex-col items-center">
@@ -129,16 +131,62 @@ const WellnessScan: React.FC = () => {
                             {/* Vibe Selector */}
                             <div className="space-y-4 pb-8">
                                 <h3 className="font-bold text-center">Overall Vibe</h3>
-                                <div className="flex justify-between items-center bg-slate-50 p-5 rounded-2xl shadow-inner">
-                                    {['😔', '😐', '✨', '😊', '🤩'].map((emoji, i) => (
-                                        <button
-                                            key={emoji}
-                                            type="button"
-                                            className={`text-3xl transition-all active:scale-125 ${i === 2 ? 'scale-125' : 'grayscale hover:grayscale-0'}`}
-                                        >
-                                            {emoji}
-                                        </button>
-                                    ))}
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-center bg-slate-50 p-4 xs:p-5 rounded-2xl shadow-inner overflow-x-auto gap-2 no-scrollbar">
+                                        {[
+                                            { emoji: '�', label: 'Happy / Content', desc: 'Everyday joy, satisfaction, feeling "okay" with life.' },
+                                            { emoji: '�', label: 'Calm / Peaceful', desc: 'Relaxation, relief, mindfulness, emotional ease.' },
+                                            { emoji: '�', label: 'Neutral / Steady', desc: 'Neither good nor bad — just being.' },
+                                            { emoji: '�', label: 'Thoughtful / Uncertain', desc: 'Reflection, questioning, mild confusion or contemplation.' },
+                                            { emoji: '😔', label: 'Sad / Low', desc: 'Disappointment, loneliness, emotional heaviness.' },
+                                            { emoji: '😤', label: 'Stressed / Frustrated', desc: 'Pressure, irritation, feeling overwhelmed.' },
+                                            { emoji: '✨', label: 'Hopeful / Inspired', desc: 'Optimism, motivation, belief that things can improve.' }
+                                        ].map((vibe, i) => (
+                                            <button
+                                                key={vibe.emoji}
+                                                type="button"
+                                                onClick={() => setSelectedVibe(vibe.label === selectedVibe ? null : vibe.label)}
+                                                onMouseEnter={() => setHoveredVibe(vibe.label)}
+                                                onMouseLeave={() => setHoveredVibe(null)}
+                                                className={`text-2xl xs:text-3xl transition-all active:scale-125 flex-shrink-0 ${(hoveredVibe === vibe.label || selectedVibe === vibe.label)
+                                                    ? 'scale-125 grayscale-0'
+                                                    : 'grayscale opacity-60 hover:opacity-100 hover:grayscale-0'
+                                                    }`}
+                                            >
+                                                {vibe.emoji}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Vibe Description Box */}
+                                    <div className="min-h-[60px] flex flex-col items-center justify-center text-center px-4 animate-in fade-in duration-300">
+                                        {(() => {
+                                            const activeVibe = hoveredVibe || selectedVibe;
+                                            const vibeInfo = [
+                                                { label: 'Happy / Content', desc: 'Everyday joy, satisfaction, feeling "okay" with life.' },
+                                                { label: 'Calm / Peaceful', desc: 'Relaxation, relief, mindfulness, emotional ease.' },
+                                                { label: 'Neutral / Steady', desc: 'Neither good nor bad — just being.' },
+                                                { label: 'Thoughtful / Uncertain', desc: 'Reflection, questioning, mild confusion or contemplation.' },
+                                                { label: 'Sad / Low', desc: 'Disappointment, loneliness, emotional heaviness.' },
+                                                { label: 'Stressed / Frustrated', desc: 'Pressure, irritation, feeling overwhelmed.' },
+                                                { label: 'Hopeful / Inspired', desc: 'Optimism, motivation, belief that things can improve.' }
+                                            ].find(v => v.label === activeVibe);
+
+                                            if (vibeInfo) {
+                                                return (
+                                                    <>
+                                                        <p className="text-[#13ec13] font-bold text-sm uppercase tracking-wider mb-1">
+                                                            {vibeInfo.label}
+                                                        </p>
+                                                        <p className="text-slate-500 text-xs leading-relaxed">
+                                                            {vibeInfo.desc}
+                                                        </p>
+                                                    </>
+                                                );
+                                            }
+                                            return <p className="text-slate-300 text-xs italic italic">Tap an emoji to see how you feel</p>;
+                                        })()}
+                                    </div>
                                 </div>
                             </div>
                         </form>
