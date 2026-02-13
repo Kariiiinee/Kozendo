@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flower, Menu, Pause, Volume2, ArrowUp } from 'lucide-react';
 import { mockData } from '../data/mockData';
+import BottomNav from '../components/BottomNav';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
@@ -98,6 +99,7 @@ const Home: React.FC = () => {
                 {/* iOS Home Indicator Spacing */}
                 <div className="h-4"></div>
             </div>
+            <BottomNav />
         </main>
     );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, Brain, Accessibility, Droplets, Wind, Bookmark, Share2, ChevronLeft, MoreHorizontal } from 'lucide-react';
 import { mockData } from '../data/mockData';
+import BottomNav from '../components/BottomNav';
 
 const WellnessInsights: React.FC = () => {
     const navigate = useNavigate();
@@ -115,7 +116,7 @@ const WellnessInsights: React.FC = () => {
                 </div>
 
                 {/* Sticky Footer Actions */}
-                <div className="absolute bottom-0 left-0 w-full p-6 pb-12 bg-gradient-to-t from-white via-white to-transparent flex flex-col gap-3 z-20">
+                <div className="absolute bottom-28 left-0 w-full px-6 flex flex-col gap-3 z-20">
                     <button
                         onClick={() => navigate('/stats')}
                         className="w-full bg-[#13ec13] text-slate-900 font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-[#13ec13]/25 hover:opacity-95 active:scale-[0.98] transition-all"
@@ -123,14 +124,9 @@ const WellnessInsights: React.FC = () => {
                         <Bookmark className="w-5 h-5" />
                         Save to History
                     </button>
-                    <button className="w-full bg-slate-50 border border-slate-100 text-slate-700 font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-all">
-                        <Share2 className="w-5 h-5" />
-                        Share Insight
-                    </button>
                 </div>
 
-                {/* Home Indicator */}
-                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-slate-100 rounded-full z-30" />
+                <BottomNav />
             </main>
         </div>
     );
