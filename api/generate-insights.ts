@@ -15,6 +15,7 @@ export default async function handler(req: any, res: any) {
     - Physical State: ${body}
     - Emotional State: ${heart}
     - Environment: ${environment}
+    - Breathing Reflection: ${req.body.breathAction}
     - Daily Reflection: ${reflection}
     - Overall Vibe: ${vibe}
 

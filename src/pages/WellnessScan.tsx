@@ -15,8 +15,23 @@ const WellnessScan: React.FC = () => {
     const [breathAction, setBreathAction] = React.useState('');
     const [reflection, setReflection] = React.useState('');
 
+    const [error, setError] = React.useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Comprehensive Validation
+        if (!bodyScan.trim() || !heartScan.trim() || !envScan.trim() || !reflection.trim() || !selectedVibe) {
+            setError('Please complete all sections to receive your personalized insight.');
+            // Scroll to top or error section
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        setIsSubmitting(true);
+        setError(null);
+
         const scanData = {
             body: bodyScan,
             heart: heartScan,
@@ -25,7 +40,11 @@ const WellnessScan: React.FC = () => {
             reflection: reflection,
             vibe: selectedVibe
         };
-        navigate('/insights', { state: { scanData } });
+
+        // Brief delay for UX feel
+        setTimeout(() => {
+            navigate('/insights', { state: { scanData } });
+        }, 300);
     };
 
     return (
@@ -57,6 +76,12 @@ const WellnessScan: React.FC = () => {
                         <section className="text-center space-y-2">
                             <h2 className="text-2xl font-extrabold tracking-tight">Mindful Check-in</h2>
                             <p className="text-slate-500 text-sm">Take a moment to listen to yourself.</p>
+
+                            {error && (
+                                <div className="mt-4 p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-600 text-sm font-medium animate-in slide-in-from-top-2 duration-300">
+                                    {error}
+                                </div>
+                            )}
                         </section>
 
                         <form className="space-y-8" onSubmit={handleSubmit}>
@@ -227,10 +252,11 @@ const WellnessScan: React.FC = () => {
                 <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-6 pb-12 bg-gradient-to-t from-white via-white to-transparent z-40">
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-[#13ec13] hover:bg-[#13ec13]/90 text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-[#13ec13]/30 transition-all active:scale-95 flex items-center justify-center gap-2"
+                        disabled={isSubmitting}
+                        className={`w-full ${isSubmitting ? 'bg-slate-300 pointer-events-none' : 'bg-[#13ec13] hover:bg-[#13ec13]/90'} text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-[#13ec13]/30 transition-all active:scale-95 flex items-center justify-center gap-2`}
                     >
-                        <span>Submit Scan</span>
-                        <Send className="w-5 h-5" />
+                        <span>{isSubmitting ? 'Processing Scan...' : 'Submit Scan'}</span>
+                        <Send className={`w-5 h-5 ${isSubmitting ? 'animate-pulse' : ''}`} />
                     </button>
                 </div>
 
