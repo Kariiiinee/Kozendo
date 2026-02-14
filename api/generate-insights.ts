@@ -98,8 +98,8 @@ export default async function handler(req: any, res: any) {
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 1024,
-          responseMimeType: "application/json",
+          max_output_tokens: 1024,
+          response_mime_type: "application/json",
         }
       }),
     });
