@@ -49,24 +49,27 @@ const WellnessInsights: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center items-center">
-                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-6">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-[#13ec13]/20 rounded-full blur-3xl animate-pulse" />
-                        <div className="relative bg-white p-6 rounded-3xl shadow-2xl">
-                            <Brain className="w-16 h-16 text-[#13ec13] animate-bounce" />
+            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center">
+                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col shadow-2xl">
+                    <Header title="AI Insights" />
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-[#13ec13]/20 rounded-full blur-3xl animate-pulse" />
+                            <div className="relative bg-white p-6 rounded-3xl shadow-2xl">
+                                <Brain className="w-16 h-16 text-[#13ec13] animate-bounce" />
+                            </div>
                         </div>
-                    </div>
-                    <div className="space-y-2">
-                        <h2 className="text-2xl font-black tracking-tight text-slate-900">Personalizing Your Flow</h2>
-                        <div className="flex items-center justify-center gap-2 text-[#13ec13] font-bold uppercase tracking-widest text-xs">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            <span>AI is thinking...</span>
+                        <div className="space-y-2">
+                            <h2 className="text-2xl font-black tracking-tight text-slate-900">Personalizing Your Flow</h2>
+                            <div className="flex items-center justify-center gap-2 text-[#13ec13] font-bold uppercase tracking-widest text-xs">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>AI is thinking...</span>
+                            </div>
                         </div>
+                        <p className="text-slate-400 text-sm leading-relaxed px-4">
+                            Analyzing your scan results to create a unique micro-routine just for you.
+                        </p>
                     </div>
-                    <p className="text-slate-400 text-sm leading-relaxed px-4">
-                        Analyzing your scan results to create a unique micro-routine just for you.
-                    </p>
                 </main>
             </div>
         );
@@ -74,15 +77,18 @@ const WellnessInsights: React.FC = () => {
 
     if (!insight) {
         return (
-            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center items-center">
-                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-6">
-                    <p className="text-slate-500">No scan data found. Please complete a scan first.</p>
-                    <button
-                        onClick={() => navigate('/scan')}
-                        className="bg-[#13ec13] text-slate-900 font-bold px-6 py-3 rounded-xl"
-                    >
-                        Start Scan
-                    </button>
+            <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex justify-center">
+                <main className="w-full max-w-[430px] h-screen bg-white flex flex-col shadow-2xl">
+                    <Header title="AI Insights" />
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6">
+                        <p className="text-slate-500">No scan data found. Please complete a scan first.</p>
+                        <button
+                            onClick={() => navigate('/scan')}
+                            className="bg-[#13ec13] text-slate-900 font-bold px-6 py-3 rounded-xl"
+                        >
+                            Start Scan
+                        </button>
+                    </div>
                 </main>
             </div>
         );
@@ -95,14 +101,7 @@ const WellnessInsights: React.FC = () => {
                 <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-[#13ec13]/20 rounded-full blur-[80px]" />
                 <div className="absolute bottom-[20%] left-[-20%] w-80 h-80 bg-[#13ec13]/10 rounded-full blur-[100px]" />
 
-                {/* Status Bar Area */}
-                <div className="h-11 w-full flex items-center justify-between px-8 relative z-10">
-                    <span className="text-sm font-semibold">9:41</span>
-                    <div className="flex items-center space-x-1.5 opacity-60">
-                        <div className="w-4 h-4 rounded-full border border-black/20" />
-                        <div className="w-4 h-4 rounded-full border border-black/20" />
-                    </div>
-                </div>
+
 
                 {/* Header Navigation */}
                 <Header title="AI Insights" />
@@ -189,11 +188,11 @@ const WellnessInsights: React.FC = () => {
                 </div>
 
                 {/* Sticky Footer Actions */}
-                <div className="absolute bottom-0 left-0 w-full p-6 pb-12 bg-gradient-to-t from-white via-white to-transparent flex flex-col gap-3 z-20">
+                <div className="absolute bottom-0 left-0 w-full px-6 pb-6 pt-3 bg-gradient-to-t from-white via-white to-transparent flex flex-col gap-3 z-20">
                     <button
                         onClick={handleSaveToHistory}
                         disabled={isSaved}
-                        className={`w-full font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all ${isSaved
+                        className={`w-full font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all text-sm ${isSaved
                             ? 'bg-slate-100 text-slate-400 cursor-default shadow-none'
                             : 'bg-[#13ec13] text-slate-900 shadow-[#13ec13]/25 hover:opacity-95 active:scale-[0.98]'
                             }`}

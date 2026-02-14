@@ -50,14 +50,7 @@ const WellnessScan: React.FC = () => {
     return (
         <div className="bg-[#f6f8f6] font-sans text-slate-800 min-h-screen flex flex-col items-center">
             <div className="w-full max-w-[430px] bg-white min-h-screen relative flex flex-col shadow-xl">
-                {/* iOS Status Bar Placeholder */}
-                <div className="h-11 w-full flex items-center justify-between px-6 pt-2">
-                    <span className="text-sm font-semibold">9:41</span>
-                    <div className="flex gap-1.5 items-center">
-                        <div className="w-4 h-4 rounded-full border border-black/20" />
-                        <div className="w-4 h-4 rounded-full border border-black/20" />
-                    </div>
-                </div>
+
 
                 {/* Header Navigation */}
                 <Header title="Daily Scan" />
@@ -249,14 +242,14 @@ const WellnessScan: React.FC = () => {
                 </main>
 
                 {/* Bottom Action Bar */}
-                <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-6 pb-12 bg-gradient-to-t from-white via-white to-transparent z-40">
+                <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-6 pb-6 pt-3 bg-gradient-to-t from-white via-white to-transparent z-40">
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className={`w-full ${isSubmitting ? 'bg-slate-300 pointer-events-none' : 'bg-[#13ec13] hover:bg-[#13ec13]/90'} text-slate-900 font-bold py-4 rounded-xl shadow-lg shadow-[#13ec13]/30 transition-all active:scale-95 flex items-center justify-center gap-2`}
+                        className={`w-full ${isSubmitting ? 'bg-slate-300 pointer-events-none' : 'bg-[#13ec13] hover:bg-[#13ec13]/90'} text-slate-900 font-bold py-2.5 rounded-xl shadow-lg shadow-[#13ec13]/30 transition-all active:scale-95 flex items-center justify-center gap-2 text-sm`}
                     >
                         <span>{isSubmitting ? 'Processing Scan...' : 'Submit Scan'}</span>
-                        <Send className={`w-5 h-5 ${isSubmitting ? 'animate-pulse' : ''}`} />
+                        <Send className={`w-4 h-4 ${isSubmitting ? 'animate-pulse' : ''}`} />
                     </button>
                 </div>
 
