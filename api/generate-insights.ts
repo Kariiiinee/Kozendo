@@ -66,14 +66,6 @@ export default async function handler(req: any, res: any) {
 
   const API_KEY = process.env.GOOGLE_API_KEY || '';
 
-  // Safe diagnostic logging for Vercel logs (not returned to user)
-  console.log('Kozendo API Diagnostic:', {
-    hasGoogleKey: !!process.env.GOOGLE_API_KEY,
-    googleKeyLength: process.env.GOOGLE_API_KEY?.length || 0,
-    nodeEnv: process.env.NODE_ENV,
-    allEnvKeys: Object.keys(process.env).filter(key => key.includes('API') || key.includes('KEY')).join(', ')
-  });
-
   if (!API_KEY) {
     console.error('Kozendo API Error: GOOGLE_API_KEY is not defined in process.env');
     return res.status(500).json({
@@ -82,8 +74,8 @@ export default async function handler(req: any, res: any) {
     });
   }
 
-  // Using the stable v1 API for production reliability
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent`;
+  // Using gemini-3-flash: the 2026 stable standard for high-speed analysis
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-3-flash:generateContent`;
 
   try {
     const response = await fetch(GEMINI_URL, {
