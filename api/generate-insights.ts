@@ -82,8 +82,8 @@ export default async function handler(req: any, res: any) {
     });
   }
 
-  // Using gemini-1.5-flash: the most stable and reliable model version
-  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+  // Using the stable v1 API for production reliability
+  const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent`;
 
   try {
     const response = await fetch(GEMINI_URL, {
