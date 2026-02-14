@@ -97,9 +97,7 @@ export default async function handler(req: any, res: any) {
           parts: [{ text: prompt }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          max_output_tokens: 1024,
-          response_mime_type: "application/json",
+          temperature: 0.7
         }
       }),
     });
