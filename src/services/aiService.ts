@@ -22,26 +22,43 @@ export interface AIInsight {
 
 export const generateAIInsights = async (data: ScanData): Promise<AIInsight> => {
     try {
-        // Attempt to call the real AI API proxy
-        const response = await fetch('/api/generate-insights', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
+        let retryCount = 0;
+        const maxRetries = 2;
+        let lastError: any = null;
 
-        if (response.ok) {
-            return await response.json();
+        while (retryCount <= maxRetries) {
+            try {
+                const response = await fetch('/api/generate-insights', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    return await response.json();
+                }
+
+                const errorData = await response.json().catch(() => ({}));
+                const statusCode = response.status;
+
+                // If it's a transient error (503, 429) and we have retries left
+                if ((statusCode === 503 || statusCode === 429) && retryCount < maxRetries) {
+                    retryCount++;
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    console.warn(`AI Service Transient Error (${statusCode}). Retrying in ${delay}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    continue;
+                }
+
+                throw new Error(`API error ${statusCode}: ${errorData.details || response.statusText}`);
+            } catch (err: any) {
+                lastError = err;
+                if (retryCount >= maxRetries) throw err;
+                retryCount++;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
-
-        const errorData = await response.json().catch(() => ({}));
-        console.error('AI API Error Details:', {
-            status: response.status,
-            statusText: response.statusText,
-            data: errorData
-        });
-
-        // If response is not ok (e.g., 404, 500), throw to trigger fallback
-        throw new Error(`API error ${response.status}: ${errorData.details || response.statusText}`);
+        throw lastError;
     } catch (error: any) {
         console.error('AI Service Connection Issue:', error);
 

@@ -59,38 +59,67 @@ IMPORTANT: The "icon" field is a programmatic key and must NOT be translated. It
     });
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey: API_KEY });
+  let lastError: any = null;
+  const maxRetries = 3;
+  let retryCount = 0;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        temperature: 0.7,
-      },
-    });
+  while (retryCount <= maxRetries) {
+    try {
+      const ai = new GoogleGenAI({ apiKey: API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: prompt,
+        config: {
+          temperature: 0.7,
+        },
+      });
 
-    const rawText = response.text || '';
+      const rawText = response.text || '';
+      if (!rawText) {
+        throw new Error('Empty response from AI Service');
+      }
 
-    if (!rawText) {
-      return res.status(500).json({ error: 'Empty response from AI Service' });
+      // Robust JSON Extraction: Clean any markdown code block wrappers
+      let cleanText = rawText.trim();
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
+      }
+
+      const insights = JSON.parse(cleanText);
+      return res.status(200).json(insights);
+
+    } catch (error: any) {
+      lastError = error;
+      const errorMessage = error?.message || '';
+
+      // Check if it's a transient error (503, 429, or network issue)
+      const isTransient = errorMessage.includes('503') ||
+        errorMessage.includes('429') ||
+        errorMessage.includes('fetch failed') ||
+        errorMessage.includes('model is currently experiencing high demand');
+
+      if (isTransient && retryCount < maxRetries) {
+        retryCount++;
+        const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 2s, 4s, 8s
+        console.warn(`Kozenari AI Transient Error (Attempt ${retryCount}): ${errorMessage}. Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      console.error('Kozenari AI Final Error:', errorMessage || error);
+
+      const statusCode = errorMessage.includes('401') ? 401 :
+        errorMessage.includes('403') ? 403 :
+          errorMessage.includes('429') ? 429 :
+            errorMessage.includes('503') ? 503 : 500;
+
+      return res.status(statusCode).json({
+        error: 'Failed to generate insights',
+        code: statusCode,
+        details: errorMessage || 'Unknown server error'
+      });
     }
-
-    // Robust JSON Extraction: Clean any markdown code block wrappers
-    let cleanText = rawText.trim();
-    if (cleanText.startsWith('```json')) {
-      cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
-    } else if (cleanText.startsWith('```')) {
-      cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
-    }
-
-    const insights = JSON.parse(cleanText);
-    return res.status(200).json(insights);
-  } catch (error: any) {
-    console.error('Kozenari AI Error:', error?.message || error);
-    return res.status(500).json({
-      error: 'Failed to generate insights',
-      details: error?.message || 'Unknown server error'
-    });
   }
 }
