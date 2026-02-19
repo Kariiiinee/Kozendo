@@ -2,17 +2,23 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import BottomMenu from '../components/BottomMenu';
 import { getScanHistory, clearHistory, ScanHistoryItem } from '../services/historyService';
-import { Clock, Calendar, Trash2 } from 'lucide-react';
+import { Trash2, Send, Clock, Calendar, CheckCircle2 } from 'lucide-react';
 import VibeSummary from '../components/VibeSummary';
 import CalendarView from '../components/CalendarView';
 import VibeTrendGraph from '../components/VibeTrendGraph';
 import ScanDetailModal from '../components/ScanDetailModal';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../services/supabase';
+import { deleteScanEntry } from '../services/historyService';
 
 const WellnessHistory: React.FC = () => {
     const [history, setHistory] = useState<ScanHistoryItem[]>([]);
     const [selectedScan, setSelectedScan] = useState<ScanHistoryItem | null>(null);
     const { t, i18n } = useTranslation();
+    const { user } = useAuth();
+    const [postingId, setPostingId] = useState<string | null>(null);
+    const [justPostedId, setJustPostedId] = useState<string | null>(null);
 
     useEffect(() => {
         const loadHistory = async () => {
@@ -26,6 +32,46 @@ const WellnessHistory: React.FC = () => {
         if (confirm(t('history.clear_confirm'))) {
             await clearHistory();
             setHistory([]);
+        }
+    };
+
+    const handleDeleteEntry = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        if (confirm(t('history.delete_entry_confirm'))) {
+            await deleteScanEntry(id);
+            setHistory(prev => prev.filter(item => item.id !== id));
+        }
+    };
+
+    const handlePostVibe = async (e: React.MouseEvent, item: ScanHistoryItem) => {
+        e.stopPropagation();
+        if (!user) {
+            alert(t('history.login_to_post'));
+            return;
+        }
+
+        setPostingId(item.id || null);
+        try {
+            const { error } = await supabase.from('posts').insert({
+                user_id: user.id,
+                vibe: item.vibe,
+                reflection: item.reflection,
+                body: item.body || '',
+                heart: item.heart || '',
+                environment: item.environment || '',
+                breath_action: item.breathAction || '',
+                created_at: new Date(item.timestamp).toISOString()
+            });
+
+            if (error) throw error;
+
+            setJustPostedId(item.id || null);
+            setTimeout(() => setJustPostedId(null), 3000);
+        } catch (err) {
+            console.error('Error posting vibe:', err);
+            alert(t('history.post_error'));
+        } finally {
+            setPostingId(null);
         }
     };
 
@@ -106,11 +152,40 @@ const WellnessHistory: React.FC = () => {
                                                 <span className="text-white/10">•</span>
                                                 {new Date(item.timestamp).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })}
                                             </div>
-                                            {item.vibe && (
-                                                <span className="px-3 py-1 bg-[#13ec13]/20 text-[#13ec13] text-[9px] font-black rounded-full uppercase tracking-[0.1em] border border-[#13ec13]/20">
-                                                    {item.vibe}
-                                                </span>
-                                            )}
+                                            <div className="flex items-center gap-2">
+                                                {item.vibe && (
+                                                    <span className="px-3 py-1 bg-[#13ec13]/20 text-[#13ec13] text-[9px] font-black rounded-full uppercase tracking-[0.1em] border border-[#13ec13]/20">
+                                                        {item.vibe}
+                                                    </span>
+                                                )}
+
+                                                {/* Entry Actions */}
+                                                <div className="flex items-center gap-1.5 ml-2">
+                                                    <button
+                                                        onClick={(e) => item.id && handlePostVibe(e, item)}
+                                                        disabled={!item.id || !!postingId || justPostedId === item.id}
+                                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${justPostedId === item.id
+                                                            ? 'bg-[#13ec13] text-black'
+                                                            : 'bg-white/5 text-white/40 hover:bg-[#13ec13]/20 hover:text-[#13ec13]'
+                                                            }`}
+                                                        title={t('history.post_vibe')}
+                                                    >
+                                                        {justPostedId === item.id ? (
+                                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                                        ) : (
+                                                            <Send className={`w-3.5 h-3.5 ${item.id && postingId === item.id ? 'animate-pulse' : ''}`} />
+                                                        )}
+                                                    </button>
+
+                                                    <button
+                                                        onClick={(e) => item.id && handleDeleteEntry(e, item.id)}
+                                                        className="w-7 h-7 rounded-full bg-white/5 text-white/40 flex items-center justify-center hover:bg-rose-500/20 hover:text-rose-400 transition-all"
+                                                        title={t('common.delete')}
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                         <p className="text-white font-medium text-sm mb-4 leading-relaxed line-clamp-2 italic font-serif opacity-90">
                                             "{item.insight}"

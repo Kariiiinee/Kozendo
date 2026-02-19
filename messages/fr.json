@@ -38,9 +38,13 @@
         "mood_trends": "Tendances de l'humeur",
         "completion_log": "Journal de complétion",
         "recent_entries": "Entrées récentes du journal",
-        "scans_count_one": "{{count}} Scan",
-        "scans_count_other": "{{count}} Scans",
-        "no_history": "Aucun historique pour le moment.",
+        "no_history": "Aucune session enregistrée pour le moment.",
+        "delete_entry_confirm": "Supprimer cette entrée de votre historique ?",
+        "post_vibe": "Publier dans la communauté",
+        "login_to_post": "Veuillez vous connecter pour partager votre vibe avec la communauté.",
+        "post_error": "Échec de la publication dans la communauté. Veuillez réessayer.",
+        "scans_count_one": "{{count}} scan",
+        "scans_count_other": "{{count}} scans",
         "clear_history": "Effacer l'historique",
         "clear_confirm": "Êtes-vous sûr de vouloir effacer votre historique ?"
     },
@@ -193,9 +197,9 @@
     "auth": {
         "login": "Connexion",
         "email": "Adresse Email",
-        "send_magic_link": "Envoyer le lien magique",
+        "send_magic_link": "Envoyer le lien",
         "check_email": "Vérifiez vos emails",
-        "magic_link_sent": "Un lien magique a été envoyé à votre adresse email.",
+        "magic_link_sent": "Un lien de connexion a été envoyé à votre adresse email.",
         "error_auth": "Échec de l'authentification. Veuillez réessayer.",
         "sign_out": "Déconnexion",
         "create_account": "Créer un compte"

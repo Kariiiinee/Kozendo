@@ -32,6 +32,10 @@ export const clearHistory = async (): Promise<void> => {
     localStorage.removeItem(OLD_HISTORY_KEY);
 };
 
+export const deleteScanEntry = async (id: string): Promise<void> => {
+    await db.scans.delete(id);
+};
+
 // Internal migration function
 const migrateFromLocalStorage = async () => {
     // Check if we've already migrated (could use a flag, but checking empty DB + existing localstorage is a decent heuristic)
