@@ -15,12 +15,14 @@ import Login from './pages/Login';
 import ProfileCreation from './pages/ProfileCreation';
 import { useAuth } from './context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import RedirectHandler from './components/RedirectHandler';
 
 function App() {
     return (
         <AuthProvider>
             <AudioProvider>
                 <Router>
+                    <RedirectHandler />
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/profile-creation" element={
