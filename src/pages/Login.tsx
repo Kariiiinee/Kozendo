@@ -107,22 +107,26 @@ const Login: React.FC = () => {
                                 </button>
                             </form>
                         ) : (
-                            <div className="bg-white/60 backdrop-blur-md border border-[#13ec13]/20 p-8 rounded-[2.5rem] text-center shadow-xl">
-                                <div className="w-16 h-16 bg-[#13ec13]/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#13ec13]/20">
-                                    <Mail className="w-8 h-8 text-[#13ec13]" />
+                            <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-8 rounded-[2.5rem] text-center shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#13ec13]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+
+                                <div className="relative z-10">
+                                    <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#13ec13]/30">
+                                        <Mail className="w-8 h-8 text-[#13ec13]" />
+                                    </div>
+                                    <h2 className="text-3xl font-light text-white mb-3 tracking-tight">
+                                        {t('auth.check_email')}
+                                    </h2>
+                                    <p className="text-white/70 mb-8 font-medium leading-relaxed">
+                                        {t('auth.magic_link_sent')}
+                                    </p>
+                                    <button
+                                        onClick={() => setSent(false)}
+                                        className="text-[#13ec13] font-bold hover:text-[#13ec13]/80 transition-colors py-2 px-4 rounded-xl hover:bg-white/5"
+                                    >
+                                        {t('common.back', 'Try another email')}
+                                    </button>
                                 </div>
-                                <h2 className="text-2xl font-bold text-slate-900 mb-2">
-                                    {t('auth.check_email')}
-                                </h2>
-                                <p className="text-slate-500 mb-6 font-medium">
-                                    {t('auth.magic_link_sent')}
-                                </p>
-                                <button
-                                    onClick={() => setSent(false)}
-                                    className="text-[#13ec13] font-bold hover:underline"
-                                >
-                                    {t('common.back', 'Try another email')}
-                                </button>
                             </div>
                         )}
                     </div>
