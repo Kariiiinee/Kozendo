@@ -202,6 +202,11 @@
     },
     "profile": {
         "title": "Complete Your Profile",
+        "title_main": "Complete Your",
+        "title_edit": "Edit Your",
+        "title_sub": "Profile",
+        "subtitle": "Let's get to know you better",
+        "subtitle_edit": "Update your details",
         "display_name": "Display Name",
         "display_name_placeholder": "How should we call you?",
         "avatar": "Choose Your Avatar",
@@ -210,6 +215,7 @@
         "country": "Country",
         "country_placeholder": "Select or search...",
         "save_profile": "Save Profile",
+        "update_profile": "Update Profile",
         "error_save": "Failed to save profile. Please try again.",
         "display_name_taken": "This display name is already taken.",
         "success_save": "Profile saved successfully!"

@@ -14,15 +14,25 @@ const PREDEFINED_AVATARS = [
 
 
 const ProfileCreation: React.FC = () => {
-    const { user, refreshProfile, signOut } = useAuth();
+    const { user, profile, refreshProfile, signOut } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const [displayName, setDisplayName] = useState('');
-    const [selectedAvatar, setSelectedAvatar] = useState(PREDEFINED_AVATARS[0]);
-    const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState<string | null>(null);
-    const [country, setCountry] = useState('');
+    const [displayName, setDisplayName] = useState(profile?.display_name || '');
+    const [selectedAvatar, setSelectedAvatar] = useState(() => {
+        if (profile?.avatar_url && PREDEFINED_AVATARS.includes(profile.avatar_url)) {
+            return profile.avatar_url;
+        }
+        return PREDEFINED_AVATARS[0];
+    });
+    const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState<string | null>(() => {
+        if (profile?.avatar_url && !PREDEFINED_AVATARS.includes(profile.avatar_url)) {
+            return profile.avatar_url;
+        }
+        return null;
+    });
+    const [country, setCountry] = useState(profile?.country || '');
     const [countrySearch, setCountrySearch] = useState('');
     const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -30,12 +40,14 @@ const ProfileCreation: React.FC = () => {
     const [isNameTaken, setIsNameTaken] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const isEditMode = !!profile;
+
     const filteredCountries = COUNTRIES.filter(c =>
         c.label.toLowerCase().includes(countrySearch.toLowerCase())
     );
 
     const checkDisplayName = async (name: string) => {
-        if (name.length < 3) {
+        if (name.length < 3 || (isEditMode && name === profile?.display_name)) {
             setIsNameTaken(false);
             return;
         }
@@ -155,9 +167,11 @@ const ProfileCreation: React.FC = () => {
                                 </div>
                                 <div className="flex-1">
                                     <h1 className="text-2xl font-light tracking-tight text-white leading-tight">
-                                        {t('profile.title_main', 'Complete Your')} <span className="font-bold">{t('profile.title_sub', 'Profile')}</span>
+                                        {isEditMode ? t('profile.title_edit', 'Edit Your') : t('profile.title_main', 'Complete Your')} <span className="font-bold">{t('profile.title_sub', 'Profile')}</span>
                                     </h1>
-                                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/30">{t('profile.subtitle', 'Let\'s get to know you better')}</p>
+                                    <p className="text-[10px] uppercase font-bold tracking-widest text-white/30">
+                                        {isEditMode ? t('profile.subtitle_edit', 'Update your details') : t('profile.subtitle', 'Let\'s get to know you better')}
+                                    </p>
                                 </div>
                                 <button
                                     type="button"
@@ -326,7 +340,7 @@ const ProfileCreation: React.FC = () => {
                                 {loading ? (
                                     <Loader2 className="w-6 h-6 animate-spin" />
                                 ) : (
-                                    t('profile.save_profile')
+                                    isEditMode ? t('profile.update_profile', 'Update Profile') : t('profile.save_profile')
                                 )}
                             </button>
                         </form>

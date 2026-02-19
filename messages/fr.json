@@ -202,6 +202,11 @@
     },
     "profile": {
         "title": "Complétez Votre Profil",
+        "title_main": "Complétez Votre",
+        "title_edit": "Modifier Votre",
+        "title_sub": "Profil",
+        "subtitle": "Apprenons à vous connaître",
+        "subtitle_edit": "Mettez à jour vos informations",
         "display_name": "Nom d'affichage",
         "display_name_placeholder": "Comment devrions-nous vous appeler ?",
         "avatar": "Choisissez Votre Avatar",
@@ -210,6 +215,7 @@
         "country": "Pays",
         "country_placeholder": "Sélectionnez ou recherchez...",
         "save_profile": "Enregistrer le Profil",
+        "update_profile": "Mettre à jour le Profil",
         "error_save": "Échec de l'enregistrement du profil. Veuillez réessayer.",
         "display_name_taken": "Ce nom d'affichage est déjà utilisé.",
         "success_save": "Profil enregistré avec succès !"
