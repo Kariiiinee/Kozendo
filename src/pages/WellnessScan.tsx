@@ -5,10 +5,12 @@ import Header from '../components/Header';
 import BottomMenu from '../components/BottomMenu';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../services/supabase';
+import { useAuth } from '../context/AuthContext';
 
 const WellnessScan: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [hoveredVibe, setHoveredVibe] = React.useState<string | null>(null);
     const [selectedVibe, setSelectedVibe] = React.useState<string | null>(null);
 
@@ -42,24 +44,20 @@ const WellnessScan: React.FC = () => {
             return;
         }
 
-        setIsSubmitting(true);
-        setError(null);
-
         const scanData = {
             body: bodyScan,
             heart: heartScan,
             environment: envScan,
             breathAction: breathAction,
             reflection: reflection,
-            vibe: selectedVibe // this is the key like 'hopeful'
+            vibe: selectedVibe
         };
 
         const saveToSupabase = async () => {
             try {
-                const { data: { user: currentUser } } = await supabase.auth.getUser();
-                if (currentUser) {
+                if (user) {
                     const { error } = await supabase.from('posts').insert({
-                        user_id: currentUser.id,
+                        user_id: user.id,
                         vibe: selectedVibe,
                         reflection: reflection,
                         body: bodyScan,
@@ -70,7 +68,6 @@ const WellnessScan: React.FC = () => {
                     });
                     if (error) console.error('Error saving scan to community:', error);
                 } else {
-                    // Store in a way that suggests we could have shared
                     console.info('Guest user: Scan saved locally only.');
                 }
             } catch (err) {
@@ -78,11 +75,11 @@ const WellnessScan: React.FC = () => {
             }
         };
 
-        saveToSupabase().finally(() => {
-            setTimeout(() => {
-                navigate('/insights', { state: { scanData } });
-            }, 1000);
-        });
+        // Fire and forget save to DB in background
+        saveToSupabase();
+
+        // Navigate immediately to the insights page (it will show loading while AI processes)
+        navigate('/insights', { state: { scanData } });
     };
 
     return (
@@ -276,6 +273,11 @@ const WellnessScan: React.FC = () => {
 
                 {/* Bottom Action Bar */}
                 <div className="fixed bottom-20 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-6 pb-4 pt-4 bg-gradient-to-t from-black/20 to-transparent z-40">
+                    {error && (
+                        <div className="mb-3 p-3 bg-rose-500/20 border border-rose-500/30 rounded-xl text-rose-200 text-[10px] font-medium text-center animate-in slide-in-from-bottom-2 duration-300">
+                            {error}
+                        </div>
+                    )}
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
