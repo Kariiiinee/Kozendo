@@ -60,80 +60,71 @@ IMPORTANT: The "icon" field is a programmatic key and must NOT be translated. It
   }
 
   let lastError: any = null;
-  const maxRetries = 2;
   const modelsToTry = ['gemini-3-flash-preview', 'gemini-3-flash'];
 
   for (const modelId of modelsToTry) {
-    let retryCount = 0;
-    while (retryCount <= maxRetries) {
-      try {
-        console.log(`Kozenari AI: Attempting with model ${modelId} (Attempt ${retryCount + 1})...`);
-        const ai = new GoogleGenAI({ apiKey: API_KEY });
-        const response = await ai.models.generateContent({
-          model: modelId,
-          contents: prompt,
-          config: {
+    try {
+      console.log(`Kozenari AI: Sending direct REST request for model ${modelId}...`);
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
             temperature: 0.7,
-          },
-        });
+          }
+        })
+      });
 
-        const rawText = response.text || '';
-        if (!rawText) {
-          throw new Error('Empty response from AI Service');
-        }
+      const data = await response.json();
 
-        // Robust JSON Extraction: Clean any markdown code block wrappers
-        let cleanText = rawText.trim();
-        if (cleanText.startsWith('```json')) {
-          cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
-        } else if (cleanText.startsWith('```')) {
-          cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
-        }
-
-        const insights = JSON.parse(cleanText);
-        return res.status(200).json(insights);
-
-      } catch (error: any) {
-        lastError = error;
-        const errorMessage = error?.message || String(error);
-        console.error(`Kozenari AI Error (${modelId}, Attempt ${retryCount + 1}):`, errorMessage);
-
-        // Detailed error for 503 or 429
-        const isTransient = errorMessage.includes('503') ||
-          errorMessage.includes('429') ||
-          errorMessage.includes('fetch failed') ||
-          errorMessage.includes('model is currently experiencing high demand') ||
-          errorMessage.includes('UNAVAILABLE');
-
-        if (isTransient && retryCount < maxRetries) {
-          retryCount++;
-          const delay = Math.pow(2, retryCount) * 1000;
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
-        }
-
-        // If it's a 404 (Model Not Found) or 400 (Invalid argument/model), try the next model
-        if (errorMessage.includes('404') || errorMessage.includes('NOT_FOUND') || errorMessage.includes('400')) {
-          break; // Exit while loop to try next modelId
-        }
-
-        // For other non-transient errors, stop and report
-        break;
+      if (!response.ok) {
+        throw new Error(`Google API Error ${response.status}: ${JSON.stringify(data.error || data)}`);
       }
+
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) {
+        throw new Error('Incomplete response from Google API (no text candidate)');
+      }
+
+      // Robust JSON Extraction
+      let cleanText = rawText.trim();
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
+      }
+
+      const insights = JSON.parse(cleanText);
+      return res.status(200).json(insights);
+
+    } catch (error: any) {
+      lastError = error;
+      const errorMessage = error?.message || String(error);
+      console.error(`Kozenari AI Direct Error (${modelId}):`, errorMessage);
+
+      // If it's a 404 or 400, try the next model
+      if (errorMessage.includes('404') || errorMessage.includes('NOT_FOUND') || errorMessage.includes('400')) {
+        continue;
+      }
+
+      // For 503/429, we'll let the client-side retry handle it or the next model cycle
+      continue;
     }
   }
 
-  // If we reach here, all models/retries failed
-  const finalErrorMessage = lastError?.message || String(lastError);
-  const statusCode = finalErrorMessage.includes('401') ? 401 :
-    finalErrorMessage.includes('403') ? 403 :
-      finalErrorMessage.includes('429') ? 429 :
-        finalErrorMessage.includes('503') ? 503 : 500;
+  // Final failure reporting
+  const finalErrorMsg = lastError?.message || String(lastError);
+  const statusCode = finalErrorMsg.includes('401') ? 401 :
+    finalErrorMsg.includes('403') ? 403 :
+      finalErrorMsg.includes('429') ? 429 :
+        finalErrorMsg.includes('503') ? 503 : 500;
 
   return res.status(statusCode).json({
-    error: 'Failed to generate insights',
+    error: 'AI Generation Failed',
     code: statusCode,
-    details: finalErrorMessage,
-    modelAttempted: modelsToTry.join(', ')
+    details: finalErrorMsg,
+    modelsAttempted: modelsToTry.join(', ')
   });
 }
