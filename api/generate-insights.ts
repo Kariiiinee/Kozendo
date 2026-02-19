@@ -67,7 +67,7 @@ IMPORTANT: The "icon" field is a programmatic key and must NOT be translated. It
     try {
       const ai = new GoogleGenAI({ apiKey: API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
           temperature: 0.7,
