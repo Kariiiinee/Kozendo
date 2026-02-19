@@ -60,66 +60,80 @@ IMPORTANT: The "icon" field is a programmatic key and must NOT be translated. It
   }
 
   let lastError: any = null;
-  const maxRetries = 3;
-  let retryCount = 0;
+  const maxRetries = 2;
+  const modelsToTry = ['gemini-3-flash-preview', 'gemini-3-flash'];
 
-  while (retryCount <= maxRetries) {
-    try {
-      const ai = new GoogleGenAI({ apiKey: API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash',
-        contents: prompt,
-        config: {
-          temperature: 0.7,
-        },
-      });
+  for (const modelId of modelsToTry) {
+    let retryCount = 0;
+    while (retryCount <= maxRetries) {
+      try {
+        console.log(`Kozenari AI: Attempting with model ${modelId} (Attempt ${retryCount + 1})...`);
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
+        const response = await ai.models.generateContent({
+          model: modelId,
+          contents: prompt,
+          config: {
+            temperature: 0.7,
+          },
+        });
 
-      const rawText = response.text || '';
-      if (!rawText) {
-        throw new Error('Empty response from AI Service');
+        const rawText = response.text || '';
+        if (!rawText) {
+          throw new Error('Empty response from AI Service');
+        }
+
+        // Robust JSON Extraction: Clean any markdown code block wrappers
+        let cleanText = rawText.trim();
+        if (cleanText.startsWith('```json')) {
+          cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
+        } else if (cleanText.startsWith('```')) {
+          cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
+        }
+
+        const insights = JSON.parse(cleanText);
+        return res.status(200).json(insights);
+
+      } catch (error: any) {
+        lastError = error;
+        const errorMessage = error?.message || String(error);
+        console.error(`Kozenari AI Error (${modelId}, Attempt ${retryCount + 1}):`, errorMessage);
+
+        // Detailed error for 503 or 429
+        const isTransient = errorMessage.includes('503') ||
+          errorMessage.includes('429') ||
+          errorMessage.includes('fetch failed') ||
+          errorMessage.includes('model is currently experiencing high demand') ||
+          errorMessage.includes('UNAVAILABLE');
+
+        if (isTransient && retryCount < maxRetries) {
+          retryCount++;
+          const delay = Math.pow(2, retryCount) * 1000;
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        }
+
+        // If it's a 404 (Model Not Found) or 400 (Invalid argument/model), try the next model
+        if (errorMessage.includes('404') || errorMessage.includes('NOT_FOUND') || errorMessage.includes('400')) {
+          break; // Exit while loop to try next modelId
+        }
+
+        // For other non-transient errors, stop and report
+        break;
       }
-
-      // Robust JSON Extraction: Clean any markdown code block wrappers
-      let cleanText = rawText.trim();
-      if (cleanText.startsWith('```json')) {
-        cleanText = cleanText.replace(/^```json/, '').replace(/```$/, '').trim();
-      } else if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/^```/, '').replace(/```$/, '').trim();
-      }
-
-      const insights = JSON.parse(cleanText);
-      return res.status(200).json(insights);
-
-    } catch (error: any) {
-      lastError = error;
-      const errorMessage = error?.message || '';
-
-      // Check if it's a transient error (503, 429, or network issue)
-      const isTransient = errorMessage.includes('503') ||
-        errorMessage.includes('429') ||
-        errorMessage.includes('fetch failed') ||
-        errorMessage.includes('model is currently experiencing high demand');
-
-      if (isTransient && retryCount < maxRetries) {
-        retryCount++;
-        const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 2s, 4s, 8s
-        console.warn(`Kozenari AI Transient Error (Attempt ${retryCount}): ${errorMessage}. Retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
-      }
-
-      console.error('Kozenari AI Final Error:', errorMessage || error);
-
-      const statusCode = errorMessage.includes('401') ? 401 :
-        errorMessage.includes('403') ? 403 :
-          errorMessage.includes('429') ? 429 :
-            errorMessage.includes('503') ? 503 : 500;
-
-      return res.status(statusCode).json({
-        error: 'Failed to generate insights',
-        code: statusCode,
-        details: errorMessage || 'Unknown server error'
-      });
     }
   }
+
+  // If we reach here, all models/retries failed
+  const finalErrorMessage = lastError?.message || String(lastError);
+  const statusCode = finalErrorMessage.includes('401') ? 401 :
+    finalErrorMessage.includes('403') ? 403 :
+      finalErrorMessage.includes('429') ? 429 :
+        finalErrorMessage.includes('503') ? 503 : 500;
+
+  return res.status(statusCode).json({
+    error: 'Failed to generate insights',
+    code: statusCode,
+    details: finalErrorMessage,
+    modelAttempted: modelsToTry.join(', ')
+  });
 }
